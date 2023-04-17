@@ -1,0 +1,1 @@
+# Rabbitmq-operator-chart

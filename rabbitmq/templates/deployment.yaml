@@ -1,61 +1,45 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rabbitmq.fullname" . }}
   labels:
-    {{- include "rabbitmq.labels" . | nindent 4 }}
+    app.kubernetes.io/component: rabbitmq-operator
+    app.kubernetes.io/name: rabbitmq-cluster-operator
+    app.kubernetes.io/part-of: rabbitmq
+  name: rabbitmq-cluster-operator
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: 1
   selector:
     matchLabels:
-      {{- include "rabbitmq.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: rabbitmq-cluster-operator
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
-        {{- include "rabbitmq.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: rabbitmq-operator
+        app.kubernetes.io/name: rabbitmq-cluster-operator
+        app.kubernetes.io/part-of: rabbitmq
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "rabbitmq.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      - command:
+        - /manager
+        env:
+        - name: OPERATOR_SCOPE_NAMESPACE
+          value: "{{ .Values.manager.watchNamespace }}"
+        - name: LOCAL_REGISTRY
+          value: {{ .Values.localRegistry | default "docker.io" }}
+        - name: NAMESPACE_OVERRIDE
+          value: {{ .Values.namespaceOverride | default "radondb" }}
+        - name: RABBITMQ_IMAGE
+          value: {{ .Values.cluster.rabbitmq.image | default "rabbitmq" }}
+        - name: RABBITMQ_VERSION
+          value: {{ .Values.cluster.rabbitmq.tag | default "3.11.13-management" }}
+        image: "{{ .Values.localRegistry | default "docker.io" }}{{"/"}}{{ .Values.namespaceOverride | default "radondb" }}{{"/"}}{{ .Values.manager.image }}:{{ .Values.manager.tag | default .Chart.AppVersion }}"
+        name: rabbitmq-cluster-operator
+        ports:
+        - containerPort: 9782
+          name: metrics
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.manager.resources | nindent 12 }}
+      serviceAccountName: rabbitmq-cluster-operator
+      terminationGracePeriodSeconds: 10
+

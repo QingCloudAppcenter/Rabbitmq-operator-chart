@@ -19,6 +19,7 @@ localRegistry: docker.io
 namespaceOverride: radondb
 pullPolicy: Always
 
+
 cluster:
   rabbitmq:
     image: rabbitmq

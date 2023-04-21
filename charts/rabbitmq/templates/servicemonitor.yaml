@@ -2,6 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: rabbitmq-service-monitor
+  namespace: {{ .Release.Namespace }}
   # If labels are defined in spec.serviceMonitorSelector.matchLabels of your deployed Prometheus object, make sure to include them here.
 spec:
   endpoints:

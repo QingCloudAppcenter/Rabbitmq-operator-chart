@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  rabbitmq:
+  - apiVersion: v2
+    appVersion: 2.2.1
+    created: "2023-04-21T06:53:38.992045581Z"
+    description: A Helm chart for Kubernetes
+    digest: d09d4f06af174488399f230754899667547811ebd2df2409ef75d2e7df99e805
+    name: rabbitmq
+    type: application
+    urls:
+    - https://github.com/QingCloudAppcenter/Rabbitmq-operator-chart/releases/download/rabbitmq-1.0.1/rabbitmq-1.0.1.tgz
+    version: 1.0.1
+generated: "2023-04-21T06:53:38.718756315Z"

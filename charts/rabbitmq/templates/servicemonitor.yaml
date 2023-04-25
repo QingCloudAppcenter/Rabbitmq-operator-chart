@@ -3,6 +3,8 @@ kind: ServiceMonitor
 metadata:
   name: rabbitmq-service-monitor
   namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/vendor: kubesphere
   # If labels are defined in spec.serviceMonitorSelector.matchLabels of your deployed Prometheus object, make sure to include them here.
 spec:
   endpoints:

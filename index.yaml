@@ -5,7 +5,7 @@ entries:
     appVersion: 2.2.2
     created: "2023-11-13T15:22:39.230778+08:00"
     description: A Helm chart for Kubernetes
-    digest: cea77737a3da3afdf10115dc8fd03b35dd6a1bb4a62bfd07a58668a95f7530a8
+    digest: eb3ec542f9b73cbba6dda56fe25c5dfc4ece7ecb6fdc8e2c8e6352a6bd5a242f
     name: rabbitmq
     type: application
     urls:

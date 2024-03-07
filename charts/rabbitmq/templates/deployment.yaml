@@ -25,14 +25,18 @@ spec:
         - name: OPERATOR_SCOPE_NAMESPACE
           value: "{{ .Values.manager.watchNamespace }}"
         - name: LOCAL_REGISTRY
-          value: {{ .Values.localRegistry | default "docker.io" }}
+          value: {{ .Values.global.imageRegistry | default "docker.io" }}
         - name: NAMESPACE_OVERRIDE
           value: {{ .Values.namespaceOverride | default "radondb" }}
         - name: RABBITMQ_IMAGE
           value: {{ .Values.cluster.rabbitmq.image | default "rabbitmq" }}
         - name: RABBITMQ_VERSION
           value: {{ .Values.cluster.rabbitmq.tag | default "3.11.13-management" }}
-        image: "{{ .Values.localRegistry | default "docker.io" }}{{"/"}}{{ .Values.namespaceOverride | default "radondb" }}{{"/"}}{{ .Values.manager.image }}:{{ .Values.manager.tag | default .Chart.AppVersion }}"
+        {{- if .Values.global.imagePullSecrets }}
+        - name: DEFAULT_IMAGE_PULL_SECRETS
+          value: {{ .Values.global.imagePullSecrets }}
+        {{- end }}
+        image: "{{ .Values.global.imageRegistry | default "docker.io" }}{{"/"}}{{ .Values.namespaceOverride | default "radondb" }}{{"/"}}{{ .Values.manager.image }}:{{ .Values.manager.tag | default .Chart.AppVersion }}"
         name: rabbitmq-cluster-operator
         ports:
         - containerPort: 9782

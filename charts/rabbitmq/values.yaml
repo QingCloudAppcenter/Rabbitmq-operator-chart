@@ -1,3 +1,7 @@
+global:
+  imageRegistry: docker.io
+  imagePullSecrets: []
+
 nodeSelector: {}
 tolerations: []
 manager:
